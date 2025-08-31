@@ -111,21 +111,6 @@
                             </div>
 
 
-
-                            <div class='form-row row'>
-
-                                <div class='col-md-12 error form-group hide'>
-
-                                    <div class='alert-danger alert'>Please correct the errors and try
-
-                                        again.</div>
-
-                                </div>
-
-                            </div>
-
-
-
                             <div class="row">
 
                                 <div class="col-xs-12">
@@ -145,6 +130,38 @@
 
                 </div>
 
+            </div>
+
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading display-table">
+                        <h3 class="panel-title">Coupon Code</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        @if (Session::has('coupon_message'))
+                            <div class="alert alert-info text-center">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                                <p>{{ Session::get('coupon_message') }}</p>
+                            </div>
+                        @endif
+                        <form action=" {{ route('coupon.post', $price) }}" method="POST">
+                            @csrf
+                            <div class='form-row row'>
+                                <div class='col-xs-12 form-group required'>
+                                    <label class='control-label'>Coupon Code</label> <input class='form-control'
+                                        size='4' type='text' name="coupon">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-primary btn-lg btn-block" style="color: aliceblue" type="submit">Apply</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
         </div>

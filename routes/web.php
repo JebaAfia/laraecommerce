@@ -48,6 +48,12 @@ Route::middleware('admin')->group(function () {
    Route::post('/change_status/{id}', [AdminController::class, 'changeStatus'])->name('admin.change_status');
    Route::get('/downloadpdf/{id}', [AdminController::class, 'downloadPDF'])->name('admin.downloadpdf');
 
+   Route::get('/add_coupon_code', [AdminController::class, 'addCouponCode'])->name('admin.addcouponcode');
+   Route::post('/add_coupon_code', [AdminController::class, 'postAddCouponCode'])->name('admin.postaddcouponcode');
+   Route::get('/view_coupon_code', [AdminController::class, 'viewCouponCode'])->name('admin.viewcouponcode');
+   Route::get('/delete_coupon/{id}', [AdminController::class, 'deleteCouponCode'])->name('admin.coupondelete');
+   Route::post('/coupon_code/{price}', [AdminController::class, 'postCouponCode'])->name('coupon.post');
+
 });
 
 require __DIR__.'/auth.php';

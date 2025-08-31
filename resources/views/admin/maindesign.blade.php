@@ -89,7 +89,7 @@
         </div>
         <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
         <ul class="list-unstyled">
-                <li class="active"><a href="index.html"> <i class="icon-home"></i>Home </a></li>
+                <li class="active"><a href="{{route('index')}}"> <i class="icon-home"></i>Home </a></li>
                 <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-windows"></i>Category</a>
                   <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
                     <li><a href="{{route('admin.addcategory')}}">Add Category</a></li>
@@ -101,6 +101,12 @@
                     <li><a href="{{route('admin.addproduct')}}">Add Product</a></li>
                     <li><a href="{{route('admin.viewproduct')}}">View Product</a></li>
                     <li><a href="{{route('admin.vieworder')}}">View Order</a></li>
+                  </ul>
+                </li>
+                <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-windows"></i>Coupon Code</a>
+                  <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+                    <li><a href="{{route('admin.addcouponcode')}}">Add Coupon Code</a></li>
+                    <li><a href="{{route('admin.viewcouponcode')}}">View Coupon Code</a></li>
                   </ul>
                 </li>
         </ul>
@@ -121,6 +127,8 @@
           @yield('view_product')
           @yield('update_product')
           @yield('view_order')
+          @yield('add_coupon_code')
+          @yield('view_coupon_code')
         </section>
         <footer class="footer">
           <div class="footer__block block no-margin-bottom">

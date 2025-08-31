@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Coupon;
 use Barryvdh\DomPDF\Facade\Pdf;
 class AdminController extends Controller
 {
@@ -141,4 +142,42 @@ class AdminController extends Controller
         $pdf = Pdf::loadView('admin.invoice', compact('data'));
         return $pdf->download('invoice.pdf');
     }
+
+    public function addCouponCode(){
+        return view('admin.addcouponcode');
+    }
+
+    public function postAddCouponCode(Request $request){
+        $coupon = new Coupon();
+        $coupon->coupon_code = $request->coupon_code;
+        $coupon->discount = $request->discount;
+        $coupon->save();
+        return redirect()->back()->with('coupon_code_message', 'Coupon Code added successfully!');
+        
+    }
+
+    public function viewCouponCode(){
+        $coupons =  Coupon::all();
+        return view('admin.viewcouponcode', compact('coupons'));
+    }
+
+    public function deleteCouponCode($id){
+        $coupon = Coupon::findOrFail($id);
+
+        $coupon->delete();
+        return redirect()->back()->with('deletecoupon_message', 'Coupon Code is deleted!');
+    }
+
+    public function postCouponCode(Request $request, $price){
+        $coupon = Coupon::where('coupon_code', $request->coupon)->first();
+        if ($coupon) {
+            if (str_contains($coupon->discount, '%')) {
+                $coupon->discount = trim($coupon->discount, '%');
+                $new_price = $price - (($price * $coupon->discount) / 100);
+                return redirect(route('stripe',['price'=>$new_price]))->with('coupon_message', 'Coupon Code applied successfully!');
+            }
+        }
+        return redirect(route('stripe',['price'=>$price]))->with('coupon_message', 'Coupon Code does not exists!');
+    }
+
 }
