@@ -19,7 +19,6 @@ class UserController extends Controller
         }
         elseif (Auth::check() && Auth::user()->user_type == "admin") {
             return view('admin.dashboard');
-            
         }
     }
 
@@ -55,6 +54,7 @@ class UserController extends Controller
         $products = Product::all();
         return view('allproducts', compact('products', 'count'));
     }
+
     public function addToCart($id){
         $product = Product::findOrFail($id);
         $product_cart = new ProductCart();
@@ -65,6 +65,7 @@ class UserController extends Controller
         return redirect()->back()->with('cart_message', 'added to the cart');
 
     }
+
     public function cartProducts(){
         if (Auth::check()) {
             $count = ProductCart::where('user_id', Auth::id())->count();
@@ -75,12 +76,14 @@ class UserController extends Controller
         }
         return view('viewcartproducts', compact('count', 'cart'));
     }
+
     public function removeCartProduct($id){
         $cart_product = ProductCart::findOrFail($id);
         $cart_product->delete();
         return redirect()->back();
 
     }
+
     public function confirmOrder(Request $request){
         $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
         $address = $request->receiver_address;
@@ -104,6 +107,7 @@ class UserController extends Controller
         
         return redirect()->back()->with('confirm_order_message','Your order is confirmed!');
     }
+    
     public function myOrders(){
         $orders = Order::where('user_id',Auth::id())->get();
         return view('viewmyorders',compact('orders'));

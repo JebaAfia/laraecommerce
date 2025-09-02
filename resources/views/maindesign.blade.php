@@ -144,8 +144,8 @@
                                     <div class="col-md-7">
                                         <div class="detail-box">
                                             <h1>
-                                                Welcome To Our <br>
-                                                Gift Shop
+                                                Welcome To My <br>
+                                                Project
                                             </h1>
                                             <p>
                                                 Sequi perspiciatis nulla reiciendis, rem, tenetur impedit, eveniet non
