@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 31, 2025 at 04:07 PM
+-- Generation Time: Sep 02, 2025 at 06:53 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -38,6 +38,8 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+('laravel-cache-356a192b7913b04c54574d18c28d46e6395428ab', 'i:2;', 1756657803),
+('laravel-cache-356a192b7913b04c54574d18c28d46e6395428ab:timer', 'i:1756657803;', 1756657803),
 ('laravel-cache-77de68daecd823babbb58edb1c8e14d7106e83bb', 'i:1;', 1756569761),
 ('laravel-cache-77de68daecd823babbb58edb1c8e14d7106e83bb:timer', 'i:1756569761;', 1756569761),
 ('laravel-cache-da4b9237bacccdf19c0760cab7aec4a8359010b0', 'i:3;', 1756569940),
@@ -78,6 +80,28 @@ INSERT INTO `categories` (`id`, `category`, `created_at`, `updated_at`) VALUES
 (5, 'Laptop', '2025-08-21 01:28:58', '2025-08-21 01:28:58'),
 (6, 'airpods', '2025-08-22 13:47:38', '2025-08-22 13:47:38'),
 (7, 'shoe', '2025-08-22 13:48:03', '2025-08-22 13:48:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coupons`
+--
+
+CREATE TABLE `coupons` (
+  `id` bigint UNSIGNED NOT NULL,
+  `coupon_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `discount` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `coupons`
+--
+
+INSERT INTO `coupons` (`id`, `coupon_code`, `discount`, `created_at`, `updated_at`) VALUES
+(2, 'rimjhimXYZ', '500', '2025-08-31 13:36:29', '2025-08-31 13:36:29'),
+(3, 'tanjir', '5%', '2025-08-31 14:22:41', '2025-08-31 14:22:41');
 
 -- --------------------------------------------------------
 
@@ -156,7 +180,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (8, '2025_08_25_192032_create_product_carts_table', 5),
 (9, '2025_08_27_164322_create_orders_table', 6),
 (10, '2025_08_27_182017_add_status_to_orders', 7),
-(11, '2025_08_30_190350_add_payment_status_to_orders', 8);
+(11, '2025_08_30_190350_add_payment_status_to_orders', 8),
+(12, '2025_08_31_164732_create_coupons_table', 9);
 
 -- --------------------------------------------------------
 
@@ -189,7 +214,11 @@ INSERT INTO `orders` (`id`, `receiver_address`, `receiver_phone`, `user_id`, `pr
 (15, 'Cumilla', '36987455211', 2, 10, '2025-08-30 14:20:33', '2025-08-30 14:20:33', 'pending', 'paid'),
 (16, 'barishal', '00000000000', 2, 10, '2025-08-30 15:20:00', '2025-08-30 15:20:00', 'pending', 'paid'),
 (17, 'jamalpur', '4444444444', 2, 11, '2025-08-30 15:24:23', '2025-08-30 15:24:23', 'pending', 'paid'),
-(18, 'barishal', '4444444444', 2, 11, '2025-08-30 15:25:49', '2025-08-30 15:25:49', 'pending', 'paid');
+(18, 'barishal', '4444444444', 2, 11, '2025-08-30 15:25:49', '2025-08-30 15:25:49', 'pending', 'paid'),
+(19, 'maniknagar', '12345678942', 1, 8, '2025-08-31 14:48:29', '2025-08-31 14:48:29', 'pending', 'cash on delivery'),
+(20, 'maniknagar', '12345678942', 1, 10, '2025-08-31 14:48:29', '2025-08-31 14:48:29', 'pending', 'cash on delivery'),
+(21, 'maniknagar', '12345678942', 1, 11, '2025-08-31 14:48:29', '2025-08-31 14:48:29', 'pending', 'cash on delivery'),
+(22, 'maniknagar', '12345678942', 1, 10, '2025-08-31 14:48:29', '2025-08-31 14:48:29', 'pending', 'cash on delivery');
 
 -- --------------------------------------------------------
 
@@ -280,7 +309,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('SQdFLMfxPGHCBU3WcMQtJma2jcVWrNXzkvqfvekQ', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMjdDMzAwako5anR3VTNBYVlmRHRKdnFzTDl0QXlvTEs2aE1MdURjaSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9zdHJpcGUvODAwMDAvMTAiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO3M6MzoidXJsIjthOjA6e319', 1756589173);
+('TVo1rrCgBQ1j9B20tPN3exub7NNxJCCMJYA51v53', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoibEVQVkw5dTFnMnFkb1FNVFVnQ2RZZzZqM1gyM1doNjYybGFnQ0xBQSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1756838872),
+('xdDvrSZ8YKUK7mZ660C5B9nKuHDhjsqSpL5HLUmK', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiS1FkQ3lNekNWQ3UyVGJQWEJDVnFzWFRrVEZDQ0xOOVFNTzh4MzJMcCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYXNoYm9hcmQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MzoidXJsIjthOjA6e319', 1756673320);
 
 -- --------------------------------------------------------
 
@@ -305,7 +335,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `user_type`) VALUES
-(1, 'jeba', 'jeba@gmail.com', NULL, '$2y$12$KWTEoggQgwWugKKv7P/8.OcHcwQsa8zL0uLJF/hxHZbTDKIwNOrxG', NULL, '2025-08-17 13:56:26', '2025-08-17 13:56:26', 'admin'),
+(1, 'jeba', 'jeba@gmail.com', '2025-08-31 10:29:21', '$2y$12$KWTEoggQgwWugKKv7P/8.OcHcwQsa8zL0uLJF/hxHZbTDKIwNOrxG', NULL, '2025-08-17 13:56:26', '2025-08-31 10:29:21', 'admin'),
 (2, 'bornu', 'tahsina@gmail.com', '2025-08-30 10:04:51', '$2y$12$7ltDexuGgIyoNrQPbsb8wuXBjiitRkveMOhZaT6./fdMcdWtktkSy', NULL, '2025-08-18 00:13:05', '2025-08-30 10:04:51', 'user'),
 (3, 'tanjir', 'tanjir@gmail.com', '2025-08-30 10:01:42', '$2y$12$j1yBaXXx0ug./GAvDNqBRec38kdnrXXgxyQTbiCC997YrvlhShEN.', NULL, '2025-08-30 10:01:17', '2025-08-30 10:01:42', 'user');
 
@@ -329,6 +359,12 @@ ALTER TABLE `cache_locks`
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `coupons`
+--
+ALTER TABLE `coupons`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -411,6 +447,12 @@ ALTER TABLE `categories`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `coupons`
+--
+ALTER TABLE `coupons`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -426,13 +468,13 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -444,7 +486,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `product_carts`
 --
 ALTER TABLE `product_carts`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `users`
