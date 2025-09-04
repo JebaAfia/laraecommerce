@@ -54,9 +54,16 @@
         <label for="" class="form-label">Phone Number:</label>
         <input  class="form-control" type="text" name="receiver_phone" placeholder="Enter your phone number here!" required>
     </div>
+    <div class="mb-3">
+        <div class='col-xs-12 form-group required'>
+            <label class='control-label'>Coupon Code</label> <input class='form-control'
+                size='4' type='text' name="coupon_code">
+        </div>
+    </div>
+
     <input type="submit" class="btn btn-warning"  name="submit" value="Confirm Order">
-    <a href="{{route('stripe',$price)}}" type="button" class="btn btn-info">PAY NOW</a>
-    
+    <a href="{{route('stripe',)}}" type="button" class="btn btn-info">PAY NOW</a>
+
 </form>
 </div>
 @endsection

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Fluent\Concerns\Has;
 
 class ProductCart extends Model
-{   
+{
     use HasFactory;
     protected $guarded = [];
     public function user(){

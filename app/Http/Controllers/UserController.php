@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\ProductCart;
 use App\Models\Order;
-use Session;
+use App\Models\OrderItem;
+use App\Models\Coupon;
 use Stripe;
 
 class UserController extends Controller
@@ -85,36 +86,86 @@ class UserController extends Controller
     }
 
     public function confirmOrder(Request $request){
+        // print_r($request->all());
+        $userId = Auth::id();
+        $cartItems = ProductCart::with('product')->where('user_id', $userId)->get();
+        $totalAmount = $cartItems->sum(function ($cartItem) {
+        return $cartItem->product->product_price;
+        });
+
+        $payableAmount = $totalAmount;
+        $couponCode = $request->input('coupon_code');
+        $coupon = null;
+        if ($couponCode) {
+            $coupon = Coupon::where('coupon_code', $couponCode)->first();
+
+            if ($coupon) {
+                if (str_contains($coupon->discount, '%')) {
+                    $discountAmount = trim($coupon->discount, '%');
+                    $payableAmount -= ($totalAmount * $discountAmount / 100);
+                } else {
+                    $payableAmount = $totalAmount - $coupon->discount ;
+                }
+                $payableAmount = max($payableAmount, 0);
+            }
+        }
+
+        $order = Order::create([
+            'receiver_address' => $request->receiver_address,
+            'receiver_phone' => $request->receiver_phone,
+            'user_id' => Auth::id(),
+            'total_amount' => $totalAmount,
+            'payable_amount' => $payableAmount,
+            'coupon_code' => $couponCode,
+        ]);
+
         $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
-        $address = $request->receiver_address;
-        $phone = $request->receiver_phone;
         foreach($cart_product_id as $cart_product){
-            $order = new Order();
-
-            $order->receiver_address = $address;
-            $order->receiver_phone = $phone;
-            $order->user_id = Auth::id();
-            $order->product_id = $cart_product->product_id ;
-
-            $order->save();
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $cart_product->product_id,
+                'quantity' => 1
+            ]);
             $cart_product->delete();
         }
-        // $cart = ProductCart::where('user_id',Auth::id())->get();
-        // foreach ($cart as $cart) {
-        //     $cart_id = ProductCart::findOrFail($cart->id);
-        //     $cart_id->delete();
-        // }
-        
+
         return redirect()->back()->with('confirm_order_message','Your order is confirmed!');
     }
-    
+
     public function myOrders(){
         $orders = Order::where('user_id',Auth::id())->get();
         return view('viewmyorders',compact('orders'));
     }
 
-    public function stripe($price, $id = null)
-    {   
+    public function stripe( Request $request)
+    {
+        $userId = Auth::id();
+        $cartItems = ProductCart::with('product')->where('user_id', $userId)->get();
+        $totalAmount = $cartItems->sum(function ($cartItem) {
+        return $cartItem->product->product_price;
+        });
+
+        $payableAmount = $totalAmount;
+
+        $order = Order::create([
+            'receiver_address' => $request->receiver_address,
+            'receiver_phone' => $request->receiver_phone,
+            'user_id' => Auth::id(),
+            'total_amount' => $totalAmount,
+            'payable_amount' => $payableAmount,
+            'coupon_code' => $couponCode,
+        ]);
+
+        $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
+        foreach($cart_product_id as $cart_product){
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $cart_product->product_id,
+                'quantity' => 1
+            ]);
+            $cart_product->delete();
+        }
+
         if (Auth::check()) {
             $count = ProductCart::where('user_id', Auth::id())->count();
             $cart = ProductCart::where('user_id',Auth::id())->get();
@@ -134,7 +185,7 @@ class UserController extends Controller
         return view('stripe', compact('count', 'price'));
     }
 
-    public function stripePost(Request $request, $price)
+    public function stripePost(Request $request)
     {
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         Stripe\Charge::create ([
@@ -145,7 +196,7 @@ class UserController extends Controller
 
                 "source" => $request->stripeToken,
 
-                "description" => "Test payment from itsolutionstuff.com." 
+                "description" => "Test payment from itsolutionstuff.com."
         ]);
         $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
         $address = $request->receiver_address;
