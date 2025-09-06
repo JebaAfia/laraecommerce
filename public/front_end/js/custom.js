@@ -7,7 +7,7 @@ function getYear() {
 
 getYear();
 
-// owl carousel 
+// owl carousel
 
 $('.owl-carousel').owlCarousel({
     loop: true,
@@ -27,3 +27,23 @@ $('.owl-carousel').owlCarousel({
         }
     }
 })
+
+
+$(function(){
+
+    $('#pay_now').on('click', function(e){
+        e.preventDefault();
+
+        let data = $('#confirm_order').serializeArray();
+        let ajaxUrl = $(this).attr('href');
+        $.ajax({
+            url: ajaxUrl,
+            data: data,
+            success: function(response){
+                window.location.href = response.url;
+            }
+        });
+    })
+
+
+});

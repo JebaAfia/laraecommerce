@@ -137,84 +137,94 @@ class UserController extends Controller
         return view('viewmyorders',compact('orders'));
     }
 
-    public function stripe( Request $request)
+    /**
+     * this is our payment - card page
+     *
+     *
+     */
+    public function stripe( Request $request, $order_id = null)
     {
+
         $userId = Auth::id();
         $cartItems = ProductCart::with('product')->where('user_id', $userId)->get();
         $totalAmount = $cartItems->sum(function ($cartItem) {
-        return $cartItem->product->product_price;
+            return $cartItem->product->product_price;
         });
 
-        $payableAmount = $totalAmount;
 
-        $order = Order::create([
-            'receiver_address' => $request->receiver_address,
-            'receiver_phone' => $request->receiver_phone,
-            'user_id' => Auth::id(),
-            'total_amount' => $totalAmount,
-            'payable_amount' => $payableAmount,
-            'coupon_code' => $couponCode,
-        ]);
+        if(!$order_id){
 
-        $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
-        foreach($cart_product_id as $cart_product){
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $cart_product->product_id,
-                'quantity' => 1
-            ]);
-            $cart_product->delete();
-        }
+            $payableAmount = $totalAmount;
+            $couponCode = $request->input('coupon_code');
+            $coupon = null;
+            if ($couponCode) {
+                $coupon = Coupon::where('coupon_code', $couponCode)->first();
 
-        if (Auth::check()) {
-            $count = ProductCart::where('user_id', Auth::id())->count();
-            $cart = ProductCart::where('user_id',Auth::id())->get();
-        }
-        else {
-            $count = '';
-        }
-        if ($id) {
-            $product = Product::findOrFail($id);
-            ProductCart::firstOrCreate([
+                if ($coupon) {
+                    if (str_contains($coupon->discount, '%')) {
+                        $discountAmount = trim($coupon->discount, '%');
+                        $payableAmount -= ($totalAmount * $discountAmount / 100);
+                    } else {
+                        $payableAmount = $totalAmount - $coupon->discount ;
+                    }
+                    $payableAmount = max($payableAmount, 0);
+                }
+            }
+
+            $order = Order::create([
+                'receiver_address' => $request->receiver_address,
+                'receiver_phone' => $request->receiver_phone,
                 'user_id' => Auth::id(),
-                'product_id' => $product->id
+                'total_amount' => $totalAmount,
+                'payable_amount' => $payableAmount,
+                'coupon_code' => $couponCode,
+                'payment_status' => 'pending'
             ]);
-        }
-        $price = $price;
 
-        return view('stripe', compact('count', 'price'));
+            $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
+            foreach($cart_product_id as $cart_product){
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cart_product->product_id,
+                    'quantity' => 1
+                ]);
+                $cart_product->delete();
+            }
+
+            return [
+                'url' => route('stripe', ['order_id' => $order->id])
+            ];
+        }
+
+
+        $order = Order::where('id', $order_id)->first();
+        $orderItems =OrderItem::where('order_id', $order_id)->get();
+        return view('stripe', compact('order', 'orderItems'));
     }
 
-    public function stripePost(Request $request)
+    public function stripePost(Request $request, $order_id)
     {
+
+        $order = Order::where('id', $order_id)->first();
+
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         Stripe\Charge::create ([
 
-                "amount" => $price * 100,
+                "amount" => $order->payable_amount * 100,
 
                 "currency" => "usd",
 
                 "source" => $request->stripeToken,
 
-                "description" => "Test payment from itsolutionstuff.com."
+                "description" => "order reference #" . $order->id
         ]);
-        $cart_product_id = ProductCart::where('user_id', Auth::id())->get();
-        $address = $request->receiver_address;
-        $phone = $request->receiver_phone;
-        foreach($cart_product_id as $cart_product){
-            $order = new Order();
 
-            $order->receiver_address = $address;
-            $order->receiver_phone = $phone;
-            $order->user_id = Auth::id();
-            $order->product_id = $cart_product->product_id ;
-            $order->payment_status = "paid";
 
-            $order->save();
-            $cart_product->delete();
-        }
-        return redirect(route('stripe',['price'=>$price]))->with('success', 'Payment successful!');
-        return back();
+        // update the payment status
+        $order->status = 'comfirmed';
+        $order->payment_status = 'paid';
+        $order->save();
 
+        return redirect(route('stripe',['order_id'=>$order->id]))->with('success', 'Payment successful!');
     }
 }

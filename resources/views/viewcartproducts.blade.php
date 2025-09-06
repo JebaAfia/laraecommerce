@@ -44,7 +44,7 @@
         {{session('confirm_order_message')}}
     </div>
 @endif
-<form action="{{route('confirm_order')}}" method="POST">
+<form action="{{route('confirm_order')}}" id="confirm_order" method="POST">
     @csrf
     <div class="mb-3">
         <label for="" class="form-label">Address:</label>
@@ -62,7 +62,7 @@
     </div>
 
     <input type="submit" class="btn btn-warning"  name="submit" value="Confirm Order">
-    <a href="{{route('stripe',)}}" type="button" class="btn btn-info">PAY NOW</a>
+    <a id="pay_now" href="{{ route('stripe') }}" type="button" class="btn btn-info">PAY NOW</a>
 
 </form>
 </div>

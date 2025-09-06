@@ -120,7 +120,7 @@
                             </a>
                         @endif
                         <a href="{{route('cartproducts')}}">
-                            <i class="fa fa-shopping-bag" aria-hidden="true">{{$count}}</i>
+                            <i class="fa fa-shopping-bag" aria-hidden="true">{{ $count ?? '' }}</i>
                         </a>
                         <form class="form-inline ">
                             <button class="btn nav_search-btn" type="submit">
@@ -186,7 +186,7 @@
         @yield('all_products')
         @yield('viewcart_products')
         @yield('stripe_view')
-        
+
     </section>
 
     <!-- end shop section -->

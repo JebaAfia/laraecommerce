@@ -18,7 +18,7 @@ Route::get('/dashboard', [UserController::class,'index'])->middleware(['auth', '
 Route::get('/myorders', [UserController::class,'myOrders'])->middleware(['auth', 'verified'])->name('myorders');
 
 Route::controller(UserController::class)->middleware(['auth', 'verified'])->group(function(){
-    Route::get('stripe/{id?}', 'stripe')->name('stripe');
+    Route::get('stripe/{order_id?}', 'stripe')->name('stripe');
     Route::post('stripe/{order_id}', 'stripePost')->name('stripe.post');
 });
 
